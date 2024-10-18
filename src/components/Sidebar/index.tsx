@@ -435,17 +435,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-primary duration-300 ease-linear dark:bg-boxdark lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+        <div className="flex items-center justify-between lg:justify-center gap-2 px-6 py-5.5 lg:py-6.5">
           <Link href="/">
             <Image
-              width={176}
-              height={32}
-              src={"/images/logo/logo.svg"}
+              width={100}
+              height={100}
+              src={"/images/logo/logo.png"}
               alt="Logo"
               priority
             />
@@ -478,7 +478,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                <h3 className="mb-4 ml-4 text-sm font-semibold text-secondary">
                   {group.name}
                 </h3>
 

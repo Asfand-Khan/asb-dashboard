@@ -112,7 +112,7 @@ const Page = () => {
                 <button
                   disabled={loading}
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:bg-primary/50"
+                  className="flex w-full items-center justify-center gap-2 rounded bg-secondary p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:bg-secondary/50"
                 >
                   {loading && <ButtonLoader className="h-5 w-5 border-2" />}
                   Add / Update
