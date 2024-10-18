@@ -4,7 +4,7 @@ import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
 import axios from "axios";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Our Mission" />
@@ -37,4 +37,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

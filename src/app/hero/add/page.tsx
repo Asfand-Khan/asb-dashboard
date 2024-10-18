@@ -1,21 +1,19 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Loader from "@/components/common/Loader";
 import ButtonLoader from "@/components/common/screenLoader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
 import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { set, z } from "zod";
+import { z } from "zod";
 
 const formSchema = z.object({
   primaryText: z.string().min(1, { message: "Primary text is required" }),
   secondaryText: z.string().min(1, { message: "Secondary text is required" }),
 });
 
-const page = () => {
+const Page = () => {
   const [formData, setFormData] = useState({
     primaryText: "",
     secondaryText: "",
@@ -128,4 +126,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

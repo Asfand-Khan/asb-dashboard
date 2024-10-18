@@ -1,12 +1,12 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   return (
     <DefaultLayout>
-      <div>page</div>
+      <div>Page</div>
     </DefaultLayout>
   );
 };
 
-export default page;
+export default Page;
