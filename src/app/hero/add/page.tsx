@@ -4,7 +4,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import ButtonLoader from "@/components/common/screenLoader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -15,6 +15,10 @@ const formSchema = z.object({
 
 const Page = () => {
   const [formData, setFormData] = useState({
+    primaryText: "",
+    secondaryText: "",
+  });
+  const [showFormData, setShowFormData] = useState({
     primaryText: "",
     secondaryText: "",
   });
@@ -31,12 +35,9 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Validate the form data using Zod schema
     const validationResult = formSchema.safeParse(formData);
 
     if (!validationResult.success) {
-      // Set error messages
       const fieldErrors = validationResult.error.flatten().fieldErrors;
       setErrors({
         primaryText: fieldErrors.primaryText?.[0] || "",
@@ -52,6 +53,7 @@ const Page = () => {
 
         if (response.status === 200) {
           setFormData({ primaryText: "", secondaryText: "" });
+          fetchData();
           toast.success("Hero created successfully");
         }
       } catch (error) {
@@ -62,6 +64,29 @@ const Page = () => {
       }
     }
   };
+
+  const fetchData = async() => {
+    try {
+      const response = await axios.get("/api/hero");
+
+      const data = response.data;
+      if (response.status === 200) {
+        setShowFormData({
+          primaryText: data.primaryText,
+          secondaryText: data.secondaryText,
+        });
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <DefaultLayout>
@@ -119,6 +144,17 @@ const Page = () => {
                 </button>
               </div>
             </form>
+          </div>
+
+          <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div>
+              <span className="font-medium">Primary Text: </span>
+              <span>{showFormData.primaryText}</span>
+            </div>
+            <div>
+              <span className="font-medium">Secondary Text: </span>
+              <span>{showFormData.secondaryText}</span>
+            </div>
           </div>
         </div>
       </div>

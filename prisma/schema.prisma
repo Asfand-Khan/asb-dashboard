@@ -14,12 +14,62 @@ datasource db {
 }
 
 model Hero {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  primaryText String
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  primaryText   String
   secondaryText String
 }
 
 model Ourmission {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  bodyText String
+}
+
+model Casestudy {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  location String
+  problem  String
+  solution String
+  image    String
+}
+
+model Customquote {
+  id                   String  @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle             String
+  primaryContactName   String
+  primaryContactNumber String
+  phoneNumber          String
+  email                String
+  comments             String?
+  file                 String?
+}
+
+model Reviews {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  image        String?
+  reviewerName String
+  review       String
+}
+
+model Trustedby {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
-  BodyText String
+  image String
+}
+
+model Services {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  headingText String
+  text        String
+  image       String
+}
+
+model Quote {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle    String
+  projectType String
+  services    String
+  name        String
+  email       String
+  phone       String
+  comments    String?
+  file        String?
 }
