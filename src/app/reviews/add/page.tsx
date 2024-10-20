@@ -20,7 +20,7 @@ const trustedBySchema = z.object({
 type TrustedByForm = z.infer<typeof trustedBySchema>;
 
 const Page = () => {
-  const [caseStudies, setCaseStudies] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [imageBase64, setImageBase64] = useState<string | ArrayBuffer | null>(
     null,
   );
@@ -79,9 +79,9 @@ const Page = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/case-study");
+      const response = await axios.get("/api/review");
       // console.log(response.data);
-      setCaseStudies(response.data);
+      setReviews(response.data);
     } catch (error) {
       toast.error("Something went wrong!");
       console.log(error);
@@ -90,13 +90,13 @@ const Page = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      // console.log(caseStudy)
-      const response = await axios.delete(`/api/case-study/${id}`);
+      const response = await toast.promise(axios.delete(`/api/review/${id}`), {
+        pending: 'Reveiw is deleting...',
+        success: 'Review Deleted 👌',
+        error: 'Oops!! Something went wrong 🤯'
+      });
       if (response.status === 200) {
-        toast.success("Case study deleted successfully!");
         fetchData();
-      } else {
-        toast.error("Something went wrong!");
       }
     } catch (error) {
       toast.error("Something went wrong!");
@@ -110,7 +110,7 @@ const Page = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Case Study" />
+      <Breadcrumb pageName="Reviews" />
       <div className="">
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -118,7 +118,7 @@ const Page = () => {
               <div className="p-6.5">
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Reviewer Name <span className="text-meta-1">*</span>
+                    Reviewer Name <span className="text-meta-1">*</span>
                   </label>
                   <input
                     type="text"
@@ -136,7 +136,7 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Problem <span className="text-meta-1">*</span>
+                    Review <span className="text-meta-1">*</span>
                   </label>
                   <textarea
                     placeholder="Enter Review"
@@ -178,31 +178,37 @@ const Page = () => {
           </div>
 
           <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-            {caseStudies.map((caseStudy, index) => (
-              <div key={caseStudy.id} className="flex items-center justify-between">
-                <div className="flex gap-5 items-center">
-                  <div className="text-red-500 font-extrabold text-xl cursor-pointer" onClick={()=>{ handleDelete(caseStudy.id)}}>x</div>
+            {reviews.map((review, index) => (
+              <div
+                key={review.id}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-5">
+                  <div
+                    className="cursor-pointer text-xl font-extrabold text-red-500"
+                    onClick={() => {
+                      handleDelete(review.id);
+                    }}
+                  >
+                    x
+                  </div>
                   <div className="flex flex-col gap-1">
                     <span>
-                      <span className="font-semibold">Location: </span>
-                      {caseStudy.location}
-                      </span>
+                      <span className="font-semibold">Reviwer Name: </span>
+                      {review.reviewerName}
+                    </span>
                     <span>
-                    <span className="font-semibold">Problem: </span>
-                      {caseStudy.problem}
-                      </span>
-                    <span>
-                    <span className="font-semibold">Solution: </span>
-                      {caseStudy.solution}
-                      </span>
+                      <span className="font-semibold">Review: </span>
+                      {review.review}
+                    </span>
                   </div>
                 </div>
-                <div className="w-4/12 flex justify-end items-center overflow-hidden">
+                <div className="flex w-4/12 items-center justify-end overflow-hidden">
                   <Image
                     width={100}
                     height={100}
-                    src={`/uploads/case-study/${caseStudy.image}`}
-                    alt={`case study ${index}`}
+                    src={`/uploads/review/${review.image}`}
+                    alt={`review ${index}`}
                   />
                 </div>
               </div>

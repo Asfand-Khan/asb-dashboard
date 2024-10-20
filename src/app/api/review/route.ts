@@ -9,6 +9,11 @@ const trustedBySchema = z.object({
     review: z.string().min(1, { message: "Review is required" }),
     image: z.any(),
   });
+
+export async function GET() {
+    const reviews = await prisma.reviews.findMany();
+    return NextResponse.json(reviews, { status: 200 });
+}
 export async function POST(request: Request) {
     try {
       const body = await request.json();
