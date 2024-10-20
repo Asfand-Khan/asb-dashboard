@@ -263,7 +263,7 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={`https://res.cloudinary.com/dkkxjlzsr/image/upload/${caseStudy.image}`}
+                    src={`${process.env.CLOUDINARY_ASSETS_ACCESS_URL}/${caseStudy.image}`}
                     alt={`case study ${index}`}
                   />
                 </div>
