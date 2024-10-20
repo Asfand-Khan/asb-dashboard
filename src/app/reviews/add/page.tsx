@@ -21,9 +21,6 @@ type TrustedByForm = z.infer<typeof trustedBySchema>;
 
 const Page = () => {
   const [reviews, setReviews] = useState<any[]>([]);
-  const [imageBase64, setImageBase64] = useState<string | ArrayBuffer | null>(
-    null,
-  );
   const [loading, setLoading] = useState(false);
 
   const {
@@ -35,31 +32,27 @@ const Page = () => {
     resolver: zodResolver(trustedBySchema),
   });
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImageBase64(reader.result);
-    };
+  const [file,setFile] = useState<File | null>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
   const onSubmit = async (data: TrustedByForm) => {
-    if (!imageBase64) {
+    if (!file) {
       toast.error("Please upload an image");
       return;
     }
 
+    const formData = new FormData();
+      formData.append('file', file);
+      formData.append('review', data.review);
+      formData.append('reviewerName', data.reviewerName);
+
     try {
       setLoading(true);
 
-      const dataToSend = {
-        ...data,
-        image: imageBase64 ?? null,
-      };
-
-      const response = await axios.post("/api/review", dataToSend);
+      const response = await axios.post("/api/review", formData);
 
       if (response.status === 200) {
         console.log(response.data);
@@ -207,7 +200,7 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={`/uploads/review/${review.image}`}
+                    src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${review.image}`}
                     alt={`review ${index}`}
                   />
                 </div>

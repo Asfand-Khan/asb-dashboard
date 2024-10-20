@@ -21,9 +21,6 @@ type ServicesForm = z.infer<typeof servicesSchema>;
 
 const Page = () => {
   const [services, setServices] = useState<any[]>([]);
-  const [imageBase64, setImageBase64] = useState<string | ArrayBuffer | null>(
-    null,
-  );
   const [loading, setLoading] = useState(false);
 
   const {
@@ -35,31 +32,27 @@ const Page = () => {
     resolver: zodResolver(servicesSchema),
   });
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImageBase64(reader.result);
-    };
+  const [file, setFile] = useState<File | null>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
   const onSubmit = async (data: ServicesForm) => {
-    if (!imageBase64) {
+    if (!file) {
       toast.error("Please upload an image");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("headingText", data.headingText);
+    formData.append("bodyText", data.bodyText);
+
     try {
       setLoading(true);
 
-      const dataToSend = {
-        ...data,
-        image: imageBase64 ?? null,
-      };
-
-      const response = await axios.post("/api/services", dataToSend);
+      const response = await axios.post("/api/services", formData);
 
       if (response.status === 200) {
         console.log(response.data);
@@ -90,11 +83,14 @@ const Page = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      const response = await toast.promise(axios.delete(`/api/services/${id}`), {
-        pending: 'Service is deleting...',
-        success: 'Service Deleted 👌',
-        error: 'Oops!! Something went wrong 🤯'
-      });
+      const response = await toast.promise(
+        axios.delete(`/api/services/${id}`),
+        {
+          pending: "Service is deleting...",
+          success: "Service Deleted 👌",
+          error: "Oops!! Something went wrong 🤯",
+        },
+      );
       if (response.status === 200) {
         fetchData();
       }
@@ -207,7 +203,7 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={`/uploads/services/${service.image}`}
+                    src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${service.image}`}
                     alt={`service ${index}`}
                   />
                 </div>

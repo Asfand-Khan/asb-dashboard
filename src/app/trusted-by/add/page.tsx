@@ -71,15 +71,12 @@ const Page = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      // console.log(caseStudy)
-      // const response = await axios.delete(`/api/trusted-by/${id}`);
       const response = await toast.promise(axios.delete(`/api/trusted-by/${id}`),{
         error: 'Oops! Something went wrong',
         pending: 'Trusted By is deleting...',
         success: 'Trusted By Deleted',
       })
       if (response.status === 200) {
-        // toast.success("Trusted By deleted successfully!");
         fetchData();
       } else {
         toast.error("Something went wrong!");
@@ -148,7 +145,7 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${eachTrustedBy.image}`}
+                    src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${eachTrustedBy.image}`}
                     alt={`case study ${index}`}
                   />
                 </div>

@@ -1,14 +1,17 @@
 import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
-import path from "path";
-import { z } from "zod";
-import { promises as fs } from "fs";
+import { v2 as cloudinary } from "cloudinary";
 
-const servicesSchema = z.object({
-  headingText: z.string().min(1, { message: "Heading Text is required" }),
-  bodyText: z.string().min(1, { message: "Body Text is required" }),
-  image: z.any(),
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+interface CloudinaryUploadResult {
+  public_id: string;
+  [key: string]: any;
+}
 
 export async function GET() {
   const services = await prisma.services.findMany();
@@ -16,41 +19,54 @@ export async function GET() {
 }
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const parsedBody = servicesSchema.safeParse(body);
 
-    if (!parsedBody.success) {
+    if (
+      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
       return NextResponse.json(
-        {
-          message: "Validation failed",
-          errors: parsedBody.error.flatten(),
-        },
-        { status: 400 },
+        { error: "Missing Cloudinary Credentials" },
+        { status: 500 },
       );
     }
 
-    const { headingText, bodyText, image } = parsedBody.data;
 
-    const fileName = `services-${Date.now()}.png`;
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const headingText = formData.get("headingText") as string;
+    const bodyText = formData.get("bodyText") as string;
 
-    const services = await prisma.services.create({
+    if (!file) {
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const result = await new Promise<CloudinaryUploadResult>(
+      (resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "ASB-services" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as CloudinaryUploadResult);
+          },
+        );
+
+        uploadStream.end(buffer);
+      },
+    );
+
+    const newService = await prisma.services.create({
       data: {
-        image: fileName,
         headingText,
         text: bodyText,
+        image: result.public_id,
       },
     });
 
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "services");
-    const filePath = path.join(uploadDir, fileName);
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(filePath, base64Data, "base64");
-
-    return NextResponse.json(
-      services,
-      { status: 200 },
-    );
+    return NextResponse.json(newService, { status: 200 });
   } catch (error) {
     console.error("Error in POST /services:", error);
     return NextResponse.json(
