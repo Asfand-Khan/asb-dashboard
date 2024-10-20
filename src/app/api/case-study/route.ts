@@ -2,12 +2,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import prisma from "@/utils/prisma";
 
-// DELETE FROM CLOUDINARY
-// cloudinary.v2.api
-//   .delete_resources(['ASB-case-study/sx9ntpn98yv4jrcvwdwm'], 
-//     { type: 'upload', resource_type: 'image' })
-//   .then(console.log);
-
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,

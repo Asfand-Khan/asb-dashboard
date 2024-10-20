@@ -19,40 +19,29 @@ type CaseStudyForm = z.infer<typeof caseStudySchema>;
 
 const Page = () => {
   const [trustedBy, setTrustedBy] = useState<any[]>([]);
-  const [imageBase64, setImageBase64] = useState<string | ArrayBuffer | null>(
-    null,
-  );
   const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<CaseStudyForm>({
-    resolver: zodResolver(caseStudySchema),
-  });
-
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImageBase64(reader.result);
-    };
+  const [file, setFile] = useState<File | null>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
-  const onSubmit = async (data: any) => {
-    if (!imageBase64) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!file) {
       toast.error("Please upload an image");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("file", file);
+
     try {
       setLoading(true);
 
-      const response = await axios.post("/api/trusted-by", {image64: imageBase64});
+      const response = await axios.post("/api/trusted-by", formData);
 
       if (response.status === 200) {
         console.log(response.data);
@@ -83,9 +72,14 @@ const Page = () => {
   const handleDelete = async (id: any) => {
     try {
       // console.log(caseStudy)
-      const response = await axios.delete(`/api/trusted-by/${id}`);
+      // const response = await axios.delete(`/api/trusted-by/${id}`);
+      const response = await toast.promise(axios.delete(`/api/trusted-by/${id}`),{
+        error: 'Oops! Something went wrong',
+        pending: 'Trusted By is deleting...',
+        success: 'Trusted By Deleted',
+      })
       if (response.status === 200) {
-        toast.success("Trusted By deleted successfully!");
+        // toast.success("Trusted By deleted successfully!");
         fetchData();
       } else {
         toast.error("Something went wrong!");
@@ -106,7 +100,7 @@ const Page = () => {
       <div className="">
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit}>
               <div className="p-6.5">
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -136,15 +130,25 @@ const Page = () => {
 
           <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
             {trustedBy.map((eachTrustedBy, index) => (
-              <div key={eachTrustedBy.id} className="flex items-center justify-between">
-                <div className="flex gap-5 items-center">
-                  <div className="text-red-500 font-extrabold text-xl cursor-pointer" onClick={()=>{ handleDelete(eachTrustedBy.id)}}>x</div>
+              <div
+                key={eachTrustedBy.id}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-5">
+                  <div
+                    className="cursor-pointer text-xl font-extrabold text-red-500"
+                    onClick={() => {
+                      handleDelete(eachTrustedBy.id);
+                    }}
+                  >
+                    x
+                  </div>
                 </div>
-                <div className="w-4/12 flex justify-end items-center overflow-hidden">
+                <div className="flex w-4/12 items-center justify-end overflow-hidden">
                   <Image
                     width={100}
                     height={100}
-                    src={`/uploads/trusted-by/${eachTrustedBy.image}`}
+                    src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${eachTrustedBy.image}`}
                     alt={`case study ${index}`}
                   />
                 </div>

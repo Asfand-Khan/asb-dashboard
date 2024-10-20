@@ -1,7 +1,17 @@
 import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
-import path from "path";
-import { promises as fs } from "fs";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+interface CloudinaryUploadResult {
+  public_id: string;
+  [key: string]: any;
+}
 
 export async function GET() {
     const trustedBy = await prisma.trustedby.findMany();
@@ -10,34 +20,50 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { image64 } = await request.json();
 
-    if (!image64) {
+    if (
+      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
       return NextResponse.json(
-        { message: "Image is required" },
-        { status: 400 },
+        { error: "Missing Cloudinary Credentials" },
+        { status: 500 },
       );
     }
-    const fileName = `trusted-by-${Date.now()}.png`;
 
-    const newTrustedBy = await prisma.trustedby.create({
-      data: {
-        image: fileName,
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+
+    if (!file) {
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const result = await new Promise<CloudinaryUploadResult>(
+      (resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "ASB-trusted-by" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as CloudinaryUploadResult);
+          },
+        );
+
+        uploadStream.end(buffer);
       },
-    });
-
-    const base64Data = image64.replace(/^data:image\/\w+;base64,/, "");
-    const uploadDir = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "trusted-by",
     );
-    const filePath = path.join(uploadDir, fileName);
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(filePath, base64Data, "base64");
 
-    return NextResponse.json(newTrustedBy, { status: 200 });
+    const trustedBy = await prisma.trustedby.create({
+      data: {
+        image: result.public_id,
+      },
+    })
+
+    return NextResponse.json(trustedBy, { status: 200 });
+
   } catch (error) {
     console.error("Error in POST /trusted-by:", error);
     return NextResponse.json(

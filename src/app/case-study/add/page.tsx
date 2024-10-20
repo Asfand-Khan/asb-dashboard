@@ -22,9 +22,6 @@ type CaseStudyForm = z.infer<typeof caseStudySchema>;
 
 const Page = () => {
   const [caseStudies, setCaseStudies] = useState<any[]>([]);
-  const [imageBase64, setImageBase64] = useState<string | ArrayBuffer | null>(
-    null,
-  );
   const [loading, setLoading] = useState(false);
 
   const {
