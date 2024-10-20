@@ -36,47 +36,89 @@ const Page = () => {
     resolver: zodResolver(caseStudySchema),
   });
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
+  // const handleFileChange = (e: any) => {
+  //   const file = e.target.files[0];
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImageBase64(reader.result);
-    };
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     setImageBase64(reader.result);
+  //   };
+  // };
+
+  const [file,setFile] = useState<File | null>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
-  const onSubmit = async (data: CaseStudyForm) => {
-    if (!imageBase64) {
+  const onSubmit = async (data:CaseStudyForm) => {
+    console.log(data);
+    console.log(file);
+
+    if(!file) {
       toast.error("Please upload an image");
       return;
     }
 
+    const formData = new FormData();
+      formData.append('file', file);
+      formData.append('location', data.location);
+      formData.append('problem', data.problem);
+      formData.append('solution', data.solution);
+
     try {
       setLoading(true);
-
-      const dataToSend = {
-        ...data,
-        image: imageBase64 ?? null,
-      };
-
-      const response = await axios.post("/api/case-study", dataToSend);
+      const response = await axios.post('/api/case-study',formData);
 
       if (response.status === 200) {
-        console.log(response.data);
         toast.success("Case study added successfully!");
         fetchData();
         reset();
-      } else {
-        toast.error("Something went wrong!");
+      }else{
+        toast.error("Something went wrong");
+        console.log(response.data);
       }
     } catch (error) {
+      toast.error("Something went wrong");
       console.log(error);
-      toast.error("Something went wrong!");
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  // const onSubmit = async (data: CaseStudyForm) => {
+    
+  //   if (!imageBase64) {
+  //     toast.error("Please upload an image");
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+
+  //     const dataToSend = {
+  //       ...data,
+  //       image: imageBase64 ?? null,
+  //     };
+
+  //     const response = await axios.post("/api/case-study", dataToSend);
+
+  //     if (response.status === 200) {
+  //       console.log(response.data);
+  //       toast.success("Case study added successfully!");
+  //       fetchData();
+  //       reset();
+  //     } else {
+  //       toast.error("Something went wrong!");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Something went wrong!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchData = async () => {
     try {
@@ -221,7 +263,7 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={`/uploads/case-study/${caseStudy.image}`}
+                    src={`https://res.cloudinary.com/dkkxjlzsr/image/upload/${caseStudy.image}`}
                     alt={`case study ${index}`}
                   />
                 </div>

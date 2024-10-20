@@ -73,3 +73,13 @@ model Quote {
   comments    String?
   file        String?
 }
+
+model Servicepagecontent {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  bodyText String
+}
+
+model Servicepageourprocess {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  bodyText String
+}

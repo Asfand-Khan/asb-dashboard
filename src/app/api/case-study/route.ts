@@ -1,64 +1,79 @@
-import { NextResponse } from "next/server";
-import path from "path";
-import { z } from "zod";
-import { promises as fs } from "fs";
+import { NextResponse, NextRequest } from "next/server";
+import { v2 as cloudinary } from "cloudinary";
 import prisma from "@/utils/prisma";
 
-const caseStudySchema = z.object({
-  location: z.string().nonempty("Primary text is required"),
-  problem: z.string().nonempty("Secondary text is required"),
-  solution: z.string().nonempty("Solution text is required"),
-  image: z.string().nonempty("Image is required"),
+// DELETE FROM CLOUDINARY
+// cloudinary.v2.api
+//   .delete_resources(['ASB-case-study/sx9ntpn98yv4jrcvwdwm'], 
+//     { type: 'upload', resource_type: 'image' })
+//   .then(console.log);
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+interface CloudinaryUploadResult {
+  public_id: string;
+  [key: string]: any;
+}
+
 export async function GET() {
-    const casestudies = await prisma.casestudy.findMany();
-    return NextResponse.json(casestudies,{status:200});
+  const casestudies = await prisma.casestudy.findMany();
+  return NextResponse.json(casestudies, { status: 200 });
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const parsedBody = caseStudySchema.safeParse(body);
-
-    if (!parsedBody.success) {
+    if (
+      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
       return NextResponse.json(
-        {
-          message: "Validation failed",
-          errors: parsedBody.error.flatten(),
-        },
-        { status: 400 },
+        { error: "Missing Cloudinary Credentials" },
+        { status: 500 },
       );
     }
 
-    const { location, problem, solution, image } = parsedBody.data;
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const location = formData.get("location") as string;
+    const problem = formData.get("problem") as string;
+    const solution = formData.get("solution") as string;
 
-    const fileName = `case-study-${Date.now()}.png`;
+    if (!file) {
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const result = await new Promise<CloudinaryUploadResult>(
+      (resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "ASB-case-study" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as CloudinaryUploadResult);
+          },
+        );
+
+        uploadStream.end(buffer);
+      },
+    );
 
     const caseStudy = await prisma.casestudy.create({
       data: {
         location,
         problem,
         solution,
-        image: fileName,
+        image: result.public_id,
       },
     });
 
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
-    const uploadDir = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "case-study",
-    );
-    const filePath = path.join(uploadDir, fileName);
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(filePath, base64Data, "base64");
-
-    return NextResponse.json(
-      { ...caseStudy, image: fileName },
-      { status: 200 },
-    );
+    return NextResponse.json(caseStudy, { status: 200 });
   } catch (error) {
     console.error("Error in POST /case-study:", error);
     return NextResponse.json(
