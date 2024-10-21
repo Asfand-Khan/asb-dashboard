@@ -25,15 +25,13 @@ interface CloudinaryUploadResult {
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const comment = formData.get("comment") as string;
+    const comments = formData.get("comments") as string;
+    const jobTitle = formData.get("jobTitle") as string;
+    const phoneNumber = formData.get("phoneNumber") as string;
+    const primaryContact = formData.get("primaryContact") as string;
     const email = formData.get("email") as string;
-    const name = formData.get("name") as string;
-    const phone = formData.get("phone") as string;
-    const projectType = formData.get("projectType") as string;
-    const role = formData.get("role") as string;
-    const service = formData.get("service") as string;
 
-    if (!email || !name || !phone || !projectType || !role || !service) {
+    if (!phoneNumber || !jobTitle || !primaryContact || !email) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -58,7 +56,7 @@ export async function POST(request: Request) {
       const result = await new Promise<CloudinaryUploadResult>(
         (resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: "ASB-request-quote" },
+            { folder: "ASB-custom-quote" },
             (error, result) => {
               if (error) reject(error);
               else resolve(result as CloudinaryUploadResult);
@@ -72,26 +70,24 @@ export async function POST(request: Request) {
       public_id = result.public_id;
     }
 
-    const quote = await prisma.quote.create({
+    const custom_quote = await prisma.customquote.create({
       data: {
         email,
-        name,
-        phone,
-        projectType,
-        jobTitle: role,
-        services: service,
-        comments: comment,
         file: public_id,
+        jobTitle,
+        primaryContactName: primaryContact,
+        phoneNumber: phoneNumber,
+        comments: comments,
       },
     });
 
     // Set CORS headers in the response
-    const response = NextResponse.json(quote, { status: 200 });
+    const response = NextResponse.json(custom_quote, { status: 200 });
     response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin, adjust as needed
 
     return response;
   } catch (error) {
-    console.error("Error in POST /request-quote:", error);
+    console.error("Error in POST /custom-quote:", error);
     const response = NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
