@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import prisma from "@/utils/prisma";
@@ -15,11 +13,12 @@ interface CloudinaryUploadResult {
   [key: string]: any;
 }
 
+// Handle CORS preflight requests
 export async function OPTIONS() {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs (e.g., allow specific origins)
+  headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs
   headers.set("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
-  headers.set("Access-Control-Allow-Headers", "Content-Type");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow necessary headers
 
   return new Response(null, { status: 204, headers });
 }
@@ -85,7 +84,7 @@ export async function POST(request: Request) {
 
     // Set CORS headers in the response
     const response = NextResponse.json(custom_quote, { status: 200 });
-    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin, adjust as needed
+    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin
 
     return response;
   } catch (error) {
@@ -94,7 +93,7 @@ export async function POST(request: Request) {
       { message: "Internal server error" },
       { status: 500 },
     );
-    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin, adjust as needed
+    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin
 
     return response;
   }
