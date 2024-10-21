@@ -13,12 +13,17 @@ interface CloudinaryUploadResult {
   [key: string]: any;
 }
 
-// Handle CORS preflight requests
-export async function OPTIONS() {
+const allowedOrigins = ["http://localhost:3000", "https://aussie-steel-beams.vercel.app/"];
+export async function OPTIONS(request: Request) {
+  const origin = request.headers.get("Origin") || "";
+  
+  // Create headers and check if the request's origin is allowed
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs
+  if (allowedOrigins.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin); // Set to request's origin if allowed
+  }
   headers.set("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
-  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow necessary headers
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   return new Response(null, { status: 204, headers });
 }
@@ -82,9 +87,13 @@ export async function POST(request: Request) {
       },
     });
 
-    // Set CORS headers in the response
+    const origin = request.headers.get("Origin") || "";
+
+    // Set CORS headers in the response if the origin is allowed
     const response = NextResponse.json(custom_quote, { status: 200 });
-    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin
+    if (allowedOrigins.includes(origin)) {
+      response.headers.set("Access-Control-Allow-Origin", origin); // Allow the request origin
+    }
 
     return response;
   } catch (error) {
@@ -93,7 +102,11 @@ export async function POST(request: Request) {
       { message: "Internal server error" },
       { status: 500 },
     );
-    response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin
+    
+    const origin = request.headers.get("Origin") || "";
+    if (allowedOrigins.includes(origin)) {
+      response.headers.set("Access-Control-Allow-Origin", origin); // Allow the request origin
+    }
 
     return response;
   }
