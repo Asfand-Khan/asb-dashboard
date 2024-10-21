@@ -16,7 +16,7 @@ interface CloudinaryUploadResult {
 const allowedOrigins = ["http://localhost:3000", "https://aussie-steel-beams.vercel.app/"];
 export async function OPTIONS(request: Request) {
   const origin = request.headers.get("Origin") || "";
-  
+
   // Create headers and check if the request's origin is allowed
   const headers = new Headers();
   if (allowedOrigins.includes(origin)) {
@@ -93,6 +93,8 @@ export async function POST(request: Request) {
     const response = NextResponse.json(custom_quote, { status: 200 });
     if (allowedOrigins.includes(origin)) {
       response.headers.set("Access-Control-Allow-Origin", origin); // Allow the request origin
+      response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      response.headers.set("Vary", "Origin"); // Indicate to caches that responses vary based on Origin
     }
 
     return response;
@@ -102,10 +104,12 @@ export async function POST(request: Request) {
       { message: "Internal server error" },
       { status: 500 },
     );
-    
+
     const origin = request.headers.get("Origin") || "";
     if (allowedOrigins.includes(origin)) {
       response.headers.set("Access-Control-Allow-Origin", origin); // Allow the request origin
+      response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      response.headers.set("Vary", "Origin");
     }
 
     return response;
