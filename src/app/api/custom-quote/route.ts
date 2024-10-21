@@ -16,7 +16,7 @@ interface CloudinaryUploadResult {
 export async function OPTIONS() {
   const headers = new Headers();
   headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs (e.g., allow specific origins)
-  headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  headers.set("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
   headers.set("Access-Control-Allow-Headers", "Content-Type");
 
   return new Response(null, { status: 204, headers });
@@ -70,19 +70,19 @@ export async function POST(request: Request) {
       public_id = result.public_id;
     }
 
-    const quote = await prisma.customquote.create({
+    const custom_quote = await prisma.customquote.create({
       data: {
         email,
         file: public_id,
         jobTitle,
         primaryContactName: primaryContact,
         phoneNumber: phoneNumber,
-        comments: comments
+        comments: comments,
       },
     });
 
     // Set CORS headers in the response
-    const response = NextResponse.json(quote, { status: 200 });
+    const response = NextResponse.json(custom_quote, { status: 200 });
     response.headers.set("Access-Control-Allow-Origin", "*"); // Allow any origin, adjust as needed
 
     return response;
