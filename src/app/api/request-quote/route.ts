@@ -13,6 +13,15 @@ interface CloudinaryUploadResult {
   [key: string]: any;
 }
 
+export async function OPTIONS() {
+    const headers = new Headers();
+    headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs (e.g., allow specific origins)
+    headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    headers.set("Access-Control-Allow-Headers", "Content-Type");
+  
+    return new Response(null, { status: 204, headers });
+  }
+
 export async function POST(request: Request) {
     try {
       const formData = await request.formData();
