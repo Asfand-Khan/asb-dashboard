@@ -36,7 +36,6 @@ model Customquote {
   id                   String  @id @default(auto()) @map("_id") @db.ObjectId
   jobTitle             String
   primaryContactName   String
-  primaryContactNumber String
   phoneNumber          String
   email                String
   comments             String?
