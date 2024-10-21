@@ -4,8 +4,7 @@ import ButtonLoader from "@/components/common/screenLoader";
 import axios from "axios";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -20,7 +19,6 @@ const signInSchema = z.object({
 type SignInForm = z.infer<typeof signInSchema>;
 
 const Page = () => {
-  const [cookies] = useCookies();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [signInData, setSignInData] = useState<SignInForm>({
@@ -56,10 +54,6 @@ const Page = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log(cookies);
-  }, []);
   return (
     <div className="flex h-screen items-center justify-center bg-primary">
       <div className="w-2/6 rounded-md border border-stroke bg-white p-5 shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -116,7 +110,7 @@ const Page = () => {
                 className="flex w-full items-center justify-center gap-2 rounded bg-secondary p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:bg-secondary/50"
               >
                 {loading && <ButtonLoader className="h-5 w-5 border-2" />}
-                Add / Update
+                Sign In
               </button>
             </div>
           </form>

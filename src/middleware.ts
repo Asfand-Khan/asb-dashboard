@@ -1,21 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  console.log("middleware");
-  const token = request.cookies.get("token"); // Get the token from cookies
+  const token = request.cookies.get("token");
 
-  // Check if the user is trying to access a protected route
-  const protectedRoutes = ["/"];
+  const protectedRoutes = ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process"];
   const pathname = request.nextUrl.pathname;
 
-  // If the token is not present and the user is trying to access a protected route
   if (!token && protectedRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/sign-in", request.url)); // Redirect to home
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  return NextResponse.next(); // Allow the request to continue
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/"], // Apply middleware only to these paths
+  matcher: ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process"],
 };
