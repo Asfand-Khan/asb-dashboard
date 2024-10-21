@@ -196,10 +196,10 @@ const Page = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex w-4/12 items-center justify-end overflow-hidden">
+                <div className="relative flex items-center justify-end overflow-hidden w-[90px] h-[80px]">
                   <Image
-                    width={100}
-                    height={100}
+                    className="object-cover w-full"
+                    fill
                     src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${review.image}`}
                     alt={`review ${index}`}
                   />
