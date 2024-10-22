@@ -55,8 +55,8 @@ const Page = () => {
     }
   };
   return (
-    <div className="flex h-screen items-center justify-center bg-primary">
-      <div className="w-2/6 rounded-md border border-stroke bg-white p-5 shadow-default dark:border-strokedark dark:bg-boxdark">
+    <div className="flex h-screen items-center justify-center bg-primary px-2">
+      <div className="w-full sm:w-4/6 md:w-[500px] rounded-md border border-stroke bg-white p-5 shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-col items-center justify-center gap-3">
           <div className="flex w-full flex-col items-center justify-center gap-3">
             <Image

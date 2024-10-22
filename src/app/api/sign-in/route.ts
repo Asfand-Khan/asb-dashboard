@@ -33,8 +33,6 @@ export async function POST(request: Request) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  console.log(email, password);
-
   const user = await prisma.user.findUnique({
     where: {
       email,
@@ -50,7 +48,7 @@ export async function POST(request: Request) {
   }
 
   // If authentication is successful, generate a JWT
-  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
+  const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET!, {
     expiresIn: "7h", // Token expires in 7 hours
   });
 

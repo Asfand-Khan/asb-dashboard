@@ -1,14 +1,15 @@
-// import ECommerce from "@/components/Dashboard/E-commerce";
-import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+"use client";
 
-export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
-};
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/hero/add");
+  }, []);
+
   return (
     <>
       <DefaultLayout>
