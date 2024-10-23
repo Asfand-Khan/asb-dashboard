@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DataTable from "react-data-table-component";
+import Image from "next/image";
 
 type CustomQuote = {
   id: string;
@@ -34,6 +35,19 @@ const FormLayout = () => {
     }
   };
 
+  const handleDelete = async(id: string) => {
+    try{
+      await toast.promise(axios.delete(`/api/custom/${id}`),{
+        pending: "Deleting Custom Quote",
+        success: "Custom Quote deleted successfully",
+        error: "Something went wrong",
+      })
+    }catch(error){
+      toast.error("Something went wrong");
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -46,8 +60,8 @@ const FormLayout = () => {
         <DataTable
           data={data}
           progressPending={loading}
-          pagination
-          selectableRows
+          paginationServer
+          responsive
           customStyles={{
             headCells: {
               style: {
@@ -65,6 +79,20 @@ const FormLayout = () => {
             },
           }}
           columns={[
+            {
+              cell: (row: CustomQuote) => (
+                <span className="cursor-pointer" onClick={()=> handleDelete(row.id)}>
+                  <Image
+                    src={`/images/icon/trash.svg`}
+                    alt="delete"
+                    width={20}
+                    height={20}
+                  />
+                </span>
+              ),
+              center: true,
+              width: "50px",
+            },
             {
               name: "Job Title",
               selector: (row: CustomQuote) => row.jobTitle,
@@ -101,8 +129,9 @@ const FormLayout = () => {
                 <span>
                   {row.file ? (
                     <a
+                      target="_blank"
                       className="rounded-sm bg-secondary px-2 py-2 text-white cursor-pointer"
-                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}`}
+                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}.pdf`}
                       download="CustomQuote.pdf"
                     >
                       Download File

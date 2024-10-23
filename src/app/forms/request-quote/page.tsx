@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 type RequestQuote = {
   comments: string;
@@ -36,6 +37,19 @@ const FormElementsPage = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await toast.promise(axios.delete(`/api/request-quote/${id}`), {
+        pending: "Deleting Request Quote",
+        success: "Request Quote deleted successfully",
+        error: "Something went wrong",
+      });
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -43,12 +57,11 @@ const FormElementsPage = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Request Quote" />
 
-      <div className="lg:w-[920px] overflow-x-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="overflow-x-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark lg:w-[920px]">
         <DataTable
           data={data}
           progressPending={loading}
           pagination
-          selectableRows
           responsive
           customStyles={{
             headCells: {
@@ -67,6 +80,23 @@ const FormElementsPage = () => {
             },
           }}
           columns={[
+            {
+              cell: (row: RequestQuote) => (
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleDelete(row.id)}
+                >
+                  <Image
+                    src={`/images/icon/trash.svg`}
+                    alt="delete"
+                    width={20}
+                    height={20}
+                  />
+                </span>
+              ),
+              center: true,
+              width: "50px",
+            },
             {
               name: "Name",
               selector: (row: RequestQuote) => row.name,
@@ -115,8 +145,9 @@ const FormElementsPage = () => {
                 <span>
                   {row.file ? (
                     <a
-                      className="rounded-sm bg-secondary px-2 py-2 text-white cursor-pointer"
-                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}`}
+                      target="_blank"
+                      className="cursor-pointer rounded-sm bg-secondary px-2 py-2 text-white"
+                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}.pdf`}
                       download="CustomQuote.pdf"
                     >
                       Download File
