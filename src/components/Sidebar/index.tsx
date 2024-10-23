@@ -242,8 +242,8 @@ const menuGroups = [
         label: "Forms",
         route: "#",
         children: [
-          { label: "Form Elements", route: "/forms/form-elements" },
-          { label: "Form Layout", route: "/forms/form-layout" },
+          { label: "Request Quote", route: "/forms/request-quote" },
+          { label: "Custom Quote", route: "/forms/custom-quote" },
         ],
       },
       {

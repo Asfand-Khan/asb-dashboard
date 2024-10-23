@@ -13,6 +13,14 @@ interface CloudinaryUploadResult {
   [key: string]: any;
 }
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb", // Set the body size limit to 10 MB
+    },
+  },
+};
+
 export async function OPTIONS() {
   const headers = new Headers();
   headers.set("Access-Control-Allow-Origin", "*"); // Adjust this as per your needs (e.g., allow specific origins)
@@ -39,6 +47,13 @@ export async function POST(request: Request) {
     let public_id: string | null = null;
 
     if (file) {
+      if (file.type !== "application/pdf") {
+        return NextResponse.json(
+          { error: "Invalid file type" },
+          { status: 400 },
+        );
+      }
+
       if (
         !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
         !process.env.CLOUDINARY_API_KEY ||
@@ -56,7 +71,7 @@ export async function POST(request: Request) {
       const result = await new Promise<CloudinaryUploadResult>(
         (resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: "ASB-custom-quote" },
+            { folder: "ASB-custom-quote", resource_type: "raw" },
             (error, result) => {
               if (error) reject(error);
               else resolve(result as CloudinaryUploadResult);
@@ -95,4 +110,9 @@ export async function POST(request: Request) {
 
     return response;
   }
+}
+
+export async function GET(request: Request) {
+  const quotes = await prisma.customquote.findMany();
+  return NextResponse.json(quotes, { status: 200 });
 }
