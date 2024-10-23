@@ -13,13 +13,8 @@ interface CloudinaryUploadResult {
   [key: string]: any;
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb", // Set the body size limit to 10 MB
-    },
-  },
-};
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function OPTIONS() {
   const headers = new Headers();
