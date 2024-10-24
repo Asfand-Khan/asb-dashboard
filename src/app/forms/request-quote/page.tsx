@@ -141,13 +141,14 @@ const FormElementsPage = () => {
             },
             {
               name: "File",
+              width: "150px",
               cell: (row: RequestQuote) => (
                 <span>
                   {row.file ? (
                     <a
                       target="_blank"
                       className="cursor-pointer rounded-sm bg-secondary px-2 py-2 text-white"
-                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}.pdf`}
+                      href={`/api/custom/download?file=${row.file}&filename=${encodeURIComponent('RequestQuote.pdf')}`}
                       download="CustomQuote.pdf"
                     >
                       Download File

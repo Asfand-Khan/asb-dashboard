@@ -37,11 +37,15 @@ const FormLayout = () => {
 
   const handleDelete = async(id: string) => {
     try{
-      await toast.promise(axios.delete(`/api/custom/${id}`),{
+      const response = await toast.promise(axios.delete(`/api/custom/${id}`),{
         pending: "Deleting Custom Quote",
         success: "Custom Quote deleted successfully",
         error: "Something went wrong",
       })
+
+      if(response.status === 200){
+        fetchData();
+      }
     }catch(error){
       toast.error("Something went wrong");
       console.log(error)
@@ -129,9 +133,8 @@ const FormLayout = () => {
                 <span>
                   {row.file ? (
                     <a
-                      target="_blank"
                       className="rounded-sm bg-secondary px-2 py-2 text-white cursor-pointer"
-                      href={`${process.env.NEXT_PUBLIC_CLOUDINARY_PDF_ASSETS_ACCESS_URL}/${row.file}.pdf`}
+                      href={`/api/custom/download?file=${row.file}&filename=${encodeURIComponent('CustomQuote.pdf')}`}
                       download="CustomQuote.pdf"
                     >
                       Download File

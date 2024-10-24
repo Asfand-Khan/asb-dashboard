@@ -26,10 +26,7 @@ export async function DELETE(
       );
 
     if (customQuote.file) {
-      await cloudinary.api.delete_resources([customQuote.file], {
-        type: "upload",
-        resource_type: "raw",
-      });
+      await cloudinary.uploader.destroy(`${customQuote.file}`, {resource_type: 'raw',type:'upload'})
     }
 
     await prisma.customquote.delete({ where: { id } });

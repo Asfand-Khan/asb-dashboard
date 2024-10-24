@@ -20,15 +20,12 @@ export async function DELETE(
     });
 
     if (!quote)
-      return NextResponse.json(
-        { message: "Quote not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ message: "Quote not found" }, { status: 404 });
 
     if (quote.file) {
-      await cloudinary.api.delete_resources([quote.file], {
-        type: "upload",
+      await cloudinary.uploader.destroy(`${quote.file}`, {
         resource_type: "raw",
+        type: "upload",
       });
     }
 
