@@ -57,7 +57,7 @@ const FormElementsPage = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Request Quote" />
 
-      <div className="overflow-x-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark lg:w-[920px]">
+      <div className="overflow-x-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
         <DataTable
           data={data}
           progressPending={loading}
@@ -69,6 +69,8 @@ const FormElementsPage = () => {
                 backgroundColor: "#f7f7f7",
                 color: "black",
                 fontSize: "14px",
+                textAlign: "center",
+                maxWidth: "1000px",
               },
             },
             pagination: {
@@ -78,6 +80,12 @@ const FormElementsPage = () => {
                 fontSize: "14px",
               },
             },
+            rows:{
+              style:{
+                maxWidth: "1000px",
+                textAlign: "center",
+              }
+            }
           }}
           columns={[
             {
@@ -102,46 +110,52 @@ const FormElementsPage = () => {
               selector: (row: RequestQuote) => row.name,
               sortable: true,
               center: true,
+              grow: 2
             },
             {
               name: "Email",
               selector: (row: RequestQuote) => row.email,
               sortable: true,
               center: true,
+              grow: 2
             },
             {
               name: "Phone",
               selector: (row: RequestQuote) => row.phone,
               sortable: true,
               center: true,
+              grow: 2
             },
             {
               name: "Job Title",
               selector: (row: RequestQuote) => row.jobTitle,
               sortable: true,
               center: true,
+              grow: 2,
             },
             {
               name: "Project Type",
               selector: (row: RequestQuote) => row.projectType,
               sortable: true,
               center: true,
+              grow: 1,
             },
             {
               name: "Services",
               selector: (row: RequestQuote) => row.services,
               sortable: true,
               center: true,
+              grow: 1
             },
             {
               name: "Comments",
               selector: (row: RequestQuote) => row.comments,
               sortable: true,
               center: true,
+              grow: 2
             },
             {
               name: "File",
-              width: "150px",
               cell: (row: RequestQuote) => (
                 <span>
                   {row.file ? (
@@ -154,12 +168,12 @@ const FormElementsPage = () => {
                       Download File
                     </a>
                   ) : (
-                    <span className="text-red-500">No File!</span>
+                    <span className="text-red-500 text-center">No File!</span>
                   )}
                 </span>
               ),
               sortable: true,
-              center: true,
+              center: true
             },
           ]}
         />

@@ -173,7 +173,10 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Short Description <span className="text-meta-1">*</span>
+                    Short Description <span className="text-meta-1">
+                      *
+                      <span>(200 max character are allowed)</span>
+                      </span>
                   </label>
                   <textarea
                     maxLength={100}

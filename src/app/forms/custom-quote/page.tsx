@@ -81,6 +81,11 @@ const FormLayout = () => {
                 fontSize: "14px",
               },
             },
+            rows:{
+              style:{
+                maxWidth: "1000px"
+              }
+            }
           }}
           columns={[
             {

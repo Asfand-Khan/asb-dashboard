@@ -62,112 +62,115 @@ const FormLayout = () => {
     <DefaultLayout>
       <Breadcrumb pageName="All Blogs" />
 
-      <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-        <DataTable
-          data={data}
-          progressPending={loading}
-          paginationServer
-          responsive
-          customStyles={{
-            headCells: {
-              style: {
-                backgroundColor: "#f7f7f7",
-                color: "black",
-                fontSize: "14px",
+      <div className="overflow-y-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="">
+          <DataTable
+            data={data}
+            progressPending={loading}
+            paginationServer
+            responsive
+            customStyles={{
+              headCells: {
+                style: {
+                  backgroundColor: "#f7f7f7",
+                  color: "black",
+                  fontSize: "12px",
+                },
               },
-            },
-            pagination: {
-              style: {
-                backgroundColor: "#f7f7f7",
-                color: "black",
-                fontSize: "14px",
+              pagination: {
+                style: {
+                  backgroundColor: "#f7f7f7",
+                  color: "black",
+                  fontSize: "14px",
+                },
               },
-            },
-          }}
-          columns={[
-            {
-              cell: (row: Blog) => (
-                <span
-                  className="cursor-pointer"
-                  onClick={() => handleDelete(row.id)}
-                >
-                  <Image
-                    src={`/images/icon/trash.svg`}
-                    alt="delete"
-                    width={20}
-                    height={20}
-                  />
-                </span>
-              ),
-              center: true,
-              width: "50px",
-            },
-            {
-              cell: (row: Blog) => (
-                <a target="_blank" href={`https://aussie-steel-beams.vercel.app/blog/${row.slug}`} className="cursor-pointer">
-                  <Image
-                    src={`/images/icon/eye.svg`}
-                    alt="delete"
-                    width={20}
-                    height={20}
-                  />
-                </a>
-              ),
-              center: true,
-              width: "50px",
-            },
-            {
-              cell: (row: Blog) => (
-                <Link
-                  className="cursor-pointer"
-                  href={`/blogs/${row.slug}`}
-                >
-                  <Image
-                    src={`/images/icon/edit.svg`}
-                    alt="delete"
-                    width={20}
-                    height={20}
-                  />
-                </Link>
-              ),
-              center: true,
-              width: "50px",
-            },
-            {
-              name: "Image",
-              cell: (row: Blog) => 
-              <span className="bg-[#f7f7f7]">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${row.image}`}
-                  alt="image"
-                  width={100}
-                  height={100}
-                />
-              </span>,
-              sortable: true,
-              center: true,
-              width: "100px",
-            },
-            {
-              name: "Title",
-              selector: (row: Blog) => row.title,
-              sortable: true,
-              center: true,
-            },
-            {
-              name: "Short Description",
-              selector: (row: Blog) => row.shortDesc,
-              sortable: true,
-              center: true,
-            },
-            {
-              name: "Long Description",
-              selector: (row: Blog) => row.longDesc,
-              sortable: true,
-              center: true,
-            },
-          ]}
-        />
+              rows:{
+                style:{
+                  maxWidth: "1000px"
+                }
+              }
+            }}
+            columns={[
+              {
+                cell: (row: Blog) => (
+                  <span className="flex items-center justify-center gap-2">
+                    <span
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(row.id)}
+                    >
+                      <Image
+                        src={`/images/icon/trash.svg`}
+                        alt="delete"
+                        width={100}
+                        height={100}
+                      />
+                    </span>
+                    <Link
+                      className="cursor-pointer"
+                      href={`/blogs/${row.slug}`}
+                    >
+                      <Image
+                        src={`/images/icon/edit.svg`}
+                        alt="delete"
+                        width={100}
+                        height={100}
+                      />
+                    </Link>
+                    <a
+                      target="_blank"
+                      href={`https://aussie-steel-beams.vercel.app/blogs/${row.slug}`}
+                      className="cursor-pointer"
+                    >
+                      <Image
+                        src={`/images/icon/eye.svg`}
+                        alt="delete"
+                        width={100}
+                        height={100}
+                      />
+                    </a>
+                  </span>
+                ),
+                center: true,
+                width: "100px",
+              },
+              {
+                name: "Image",
+                cell: (row: Blog) => (
+                  <span className="bg-[#f7f7f7] p-2 m-1 rounded-sm">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${row.image}`}
+                      alt="image"
+                      width={100}
+                      height={100}
+                      className="rounded-sm"
+                    />
+                  </span>
+                ),
+                sortable: true,
+                center: true,
+                width: "80px",
+              },
+              {
+                name: "Title",
+                selector: (row: Blog) => row.title.slice(0, 100).concat("..."),
+                sortable: true,
+                center: true,
+              },
+              {
+                name: "Short Description",
+                selector: (row: Blog) => row.shortDesc.slice(0, 100),
+                sortable: true,
+                center: true,
+              },
+              {
+                name: "Long Description",
+                selector: (row: Blog) => row.longDesc,
+                sortable: true,
+                center: true,
+              },
+            ]}
+          />
+        </div>
       </div>
     </DefaultLayout>
   );
