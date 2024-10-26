@@ -9,8 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState, useEffect } from "react";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
 import Loader from "@/components/common/Loader";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const makeSlug = (word: string) => {
     return word

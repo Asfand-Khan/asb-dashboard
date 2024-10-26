@@ -254,7 +254,6 @@
 
 // export default Page;
 
-
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
@@ -263,12 +262,13 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
-import Loader from "@/components/common/Loader";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const makeSlug = (word: string) => {
   return word
@@ -315,14 +315,13 @@ const Page = () => {
   };
 
   const onSubmit = async (data: BlogForm) => {
-
     if (!file) {
       toast.error("Please upload an image");
       return;
     }
 
     const formData = new FormData();
-    formData.append("update", 'true');
+    formData.append("update", "true");
     formData.append("file", file);
     formData.append("title", data.title);
     formData.append("longDesc", longDesc); // use longDesc state here
@@ -349,12 +348,35 @@ const Page = () => {
     }
   };
 
-  const fetchData = async () => {
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get(`/api/blogs/${id}`);
+  //     console.log(response.data);
+
+  //     if (response.status == 200) {
+  //       setValue("title", response.data.title);
+  //       setValue("shortDesc", response.data.shortDesc);
+  //       setValue("longDesc", response.data.longDesc);
+  //       setLongDesc(response.data.longDesc); // Update longDesc state
+  //     }
+  //   } catch (error) {
+  //     toast.error("Something went wrong");
+  //     console.log(error);
+  //   } finally {
+  //     setPageLoading(false);
+  //   }
+  // };
+
+  const handleQuillChange = (value: string) => {
+    setLongDesc(value); // Update longDesc state on Quill change
+  };
+
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(`/api/blogs/${id}`);
       console.log(response.data);
 
-      if (response.status == 200) {
+      if (response.status === 200) {
         setValue("title", response.data.title);
         setValue("shortDesc", response.data.shortDesc);
         setValue("longDesc", response.data.longDesc);
@@ -366,17 +388,13 @@ const Page = () => {
     } finally {
       setPageLoading(false);
     }
-  };
-
-  const handleQuillChange = (value: string) => {
-    setLongDesc(value); // Update longDesc state on Quill change
-  };
+  }, [id, setValue]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-//   if (pageLoading) return <Loader />;
+  //   if (pageLoading) return <Loader />;
 
   return (
     <DefaultLayout>
