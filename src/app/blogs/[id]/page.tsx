@@ -265,8 +265,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import Loader from "@/components/common/Loader";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -297,6 +299,7 @@ const Page = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const { id } = useParams();
   const [longDesc, setLongDesc] = useState("");
+  const router = useRouter();
 
   const {
     register,
@@ -336,7 +339,8 @@ const Page = () => {
       if (response.status === 200) {
         toast.success("Blog updated successfully!");
         reset();
-        setLongDesc(""); // Clear longDesc after submission
+        setLongDesc("");
+        router.push("/blogs");
       } else {
         toast.error("Something went wrong");
         console.log(response.data);
@@ -381,6 +385,7 @@ const Page = () => {
         setValue("title", response.data.title);
         setValue("shortDesc", response.data.shortDesc);
         setValue("longDesc", response.data.longDesc);
+        setValue("image", response.data.image);
         setLongDesc(response.data.longDesc); // Update longDesc state
       }
     } catch (error) {
@@ -393,13 +398,16 @@ const Page = () => {
 
   useEffect(() => {
     fetchData();
+    setTimeout(() => {
+      setPageLoading(false);
+    }, 3000);
   }, [fetchData]);
 
-  //   if (pageLoading) return <Loader />;
+  if (pageLoading) return <Loader />;
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Edit Blog" />
+      <Breadcrumb pageName="Edit Blog" goBack />
       <div className="">
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -459,7 +467,24 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image <span className="text-meta-1"></span>
+                    Image{" "}
+                    <span className="text-meta-1">
+                      (Image will be updated as soon as you press update)
+                    </span>
+                  </label>
+                  <div className="m-1 w-fit rounded-sm bg-[#f7f7f7] p-2">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${getValues("image")}`}
+                      alt="blog image"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Image <span className="text-meta-1">(1024px x 1024px)</span>
                   </label>
                   <input
                     type="file"

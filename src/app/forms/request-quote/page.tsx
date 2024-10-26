@@ -7,6 +7,7 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import Link from "next/link";
 
 type RequestQuote = {
   comments: string;
@@ -74,7 +75,6 @@ const FormElementsPage = () => {
                 color: "black",
                 fontSize: "14px",
                 textAlign: "center",
-                maxWidth: "1000px",
               },
             },
             pagination: {
@@ -86,7 +86,7 @@ const FormElementsPage = () => {
             },
             rows:{
               style:{
-                maxWidth: "1000px",
+                maxWidth: "1080px",
                 textAlign: "center",
               }
             }
@@ -94,6 +94,7 @@ const FormElementsPage = () => {
           columns={[
             {
               cell: (row: RequestQuote) => (
+                <span className="flex gap-2 items-center justify-center">
                 <span
                   className="cursor-pointer"
                   onClick={() => handleDelete(row.id)}
@@ -105,58 +106,66 @@ const FormElementsPage = () => {
                     height={20}
                   />
                 </span>
+                <Link href={`/forms/request-quote/${row.id}`}>
+                <Image
+                    src={`/images/icon/eye.svg`}
+                    alt="delete"
+                    width={20}
+                    height={20}
+                  />
+                </Link>
+                </span>
               ),
               center: true,
-              width: "50px",
+              width: "100px",
             },
             {
               name: "Name",
               selector: (row: RequestQuote) => row.name,
               sortable: true,
-              center: true,
-              grow: 2
+              center: true
             },
             {
               name: "Email",
               selector: (row: RequestQuote) => row.email,
               sortable: true,
               center: true,
-              grow: 2
+              width: "200px",
             },
             {
               name: "Phone",
               selector: (row: RequestQuote) => row.phone,
               sortable: true,
               center: true,
-              grow: 2
+              width: "200px",
             },
             {
               name: "Job Title",
               selector: (row: RequestQuote) => row.jobTitle,
               sortable: true,
               center: true,
-              grow: 2,
+              width: "200px",
             },
             {
               name: "Project Type",
               selector: (row: RequestQuote) => row.projectType,
               sortable: true,
               center: true,
-              grow: 1,
+              width: "200px"
             },
             {
               name: "Services",
               selector: (row: RequestQuote) => row.services,
               sortable: true,
               center: true,
-              grow: 1
+              width: "150px"
             },
             {
               name: "Comments",
-              selector: (row: RequestQuote) => row.comments,
+              selector: (row: RequestQuote) => row.comments.length > 0 ? row.comments : "No Comments",
               sortable: true,
               center: true,
-              grow: 2
+              width: "200px"
             },
             {
               name: "File",
@@ -177,7 +186,8 @@ const FormElementsPage = () => {
                 </span>
               ),
               sortable: true,
-              center: true
+              center: true,
+              width: "150px"
             },
           ]}
         />

@@ -8,6 +8,30 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const { id } = params;
+
+    const quote = await prisma.customquote.findUnique({
+      where: { id },
+    });
+
+    if (!quote)
+      return NextResponse.json({ message: "Custom Quote not found" }, { status: 404 });
+
+    return NextResponse.json(quote, { status: 200 });
+  } catch (error) {
+    console.error("Error in GET /custom-quote-id:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } },

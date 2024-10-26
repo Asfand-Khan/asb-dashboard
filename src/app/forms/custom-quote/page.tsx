@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DataTable from "react-data-table-component";
 import Image from "next/image";
+import Link from "next/link";
 
 type CustomQuote = {
   id: string;
@@ -90,7 +91,11 @@ const FormLayout = () => {
           columns={[
             {
               cell: (row: CustomQuote) => (
-                <span className="cursor-pointer" onClick={()=> handleDelete(row.id)}>
+                <span className="flex gap-2 items-center justify-center">
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleDelete(row.id)}
+                >
                   <Image
                     src={`/images/icon/trash.svg`}
                     alt="delete"
@@ -98,39 +103,53 @@ const FormLayout = () => {
                     height={20}
                   />
                 </span>
+                <Link href={`/forms/custom-quote/${row.id}`}>
+                <Image
+                    src={`/images/icon/eye.svg`}
+                    alt="delete"
+                    width={20}
+                    height={20}
+                  />
+                </Link>
+                </span>
               ),
               center: true,
-              width: "50px",
+              width: "100px",
             },
             {
               name: "Job Title",
               selector: (row: CustomQuote) => row.jobTitle,
               sortable: true,
               center: true,
+              width: "200px",
             },
             {
               name: "Primary Contact Name",
               selector: (row: CustomQuote) => row.primaryContactName,
               sortable: true,
               center: true,
+              width: "200px",
             },
             {
               name: "Email",
               selector: (row: CustomQuote) => row.email,
               sortable: true,
               center: true,
+              width: "200px",
             },
             {
               name: "Phone Number",
               selector: (row: CustomQuote) => row.phoneNumber,
               sortable: true,
               center: true,
+              width: "200px",
             },
             {
               name: "Comments",
               selector: (row: CustomQuote) => row.comments ?? "---",
               sortable: true,
               center: true,
+              width: "200px",
             },
             {
               name: "File",
@@ -151,6 +170,7 @@ const FormLayout = () => {
               ),
               sortable: true,
               center: true,
+              width: "150px",
             },
           ]}
         />
