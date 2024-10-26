@@ -10,10 +10,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import Loader from "@/components/common/Loader";
-import JoditEditor from "jodit-react";
 import dynamic from "next/dynamic";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const makeSlug = (word: string) => {
     return word

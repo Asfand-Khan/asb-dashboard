@@ -267,9 +267,8 @@ import { z } from "zod";
 import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import JoditEditor from "jodit-react";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const makeSlug = (word: string) => {
   return word

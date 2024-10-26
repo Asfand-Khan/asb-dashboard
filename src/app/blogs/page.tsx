@@ -104,7 +104,7 @@ const FormLayout = () => {
             },
             {
               cell: (row: Blog) => (
-                <a target="_blank" href={`#`} className="cursor-pointer">
+                <a target="_blank" href={`https://aussie-steel-beams.vercel.app/blog/${row.slug}`} className="cursor-pointer">
                   <Image
                     src={`/images/icon/eye.svg`}
                     alt="delete"
