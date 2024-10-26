@@ -33,13 +33,13 @@ model Casestudy {
 }
 
 model Customquote {
-  id                   String  @id @default(auto()) @map("_id") @db.ObjectId
-  jobTitle             String
-  primaryContactName   String
-  phoneNumber          String
-  email                String
-  comments             String?
-  file                 String?
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle           String
+  primaryContactName String
+  phoneNumber        String
+  email              String
+  comments           String?
+  file               String?
 }
 
 model Reviews {
@@ -88,4 +88,16 @@ model User {
   name     String
   email    String @unique
   password String
+}
+
+model Blog {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  slug      String @unique
+  shortDesc String
+  longDesc  String
+  image     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
