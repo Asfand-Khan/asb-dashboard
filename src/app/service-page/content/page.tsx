@@ -16,7 +16,6 @@ import ButtonLoader from "@/components/common/screenLoader";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { totalmem } from "os";
 
 const Page = () => {
   const [content, setContent] = useState<ContentData | null>(null);

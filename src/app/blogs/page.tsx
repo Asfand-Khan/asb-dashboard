@@ -135,9 +135,18 @@ const FormLayout = () => {
             },
             {
               name: "Image",
-              cell: (row: Blog) => <span>Image</span>,
+              cell: (row: Blog) => 
+              <span className="bg-[#f7f7f7]">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${row.image}`}
+                  alt="image"
+                  width={100}
+                  height={100}
+                />
+              </span>,
               sortable: true,
               center: true,
+              width: "100px",
             },
             {
               name: "Title",

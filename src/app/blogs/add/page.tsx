@@ -6,10 +6,11 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import Loader from "@/components/common/Loader";
+import JoditEditor from "jodit-react";
 import dynamic from "next/dynamic";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -36,6 +37,7 @@ const blogSchema = z.object({
 type BlogForm = z.infer<typeof blogSchema>;
 
 const Page = () => {
+  const editor = useRef<any>(null);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -192,10 +194,16 @@ const Page = () => {
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                     Long Description <span className="text-meta-1">*</span>
                   </label>
-                  <ReactQuill
+                  {/* <ReactQuill
                     theme="snow"
                     value={getValues("longDesc") || ""}
                     onChange={handleQuillChange}
+                  /> */}
+
+                  <JoditEditor
+                    value={getValues("longDesc") || ""}
+                    onChange={handleQuillChange}
+                    ref={editor}
                   />
                   {errors.longDesc && (
                     <p className="mt-1 text-sm text-red-500">
