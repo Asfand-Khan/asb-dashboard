@@ -26,8 +26,8 @@ const blogSchema = z.object({
   shortDesc: z
     .string()
     .min(1, { message: "Short Description is required" })
-    .max(100, {
-      message: "Short Description should be less than 100 characters",
+    .max(200, {
+      message: "Short Description should be less than 200 characters",
     }),
   longDesc: z.string().min(1, { message: "Long Description is required" }),
   image: z.any(),

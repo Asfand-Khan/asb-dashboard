@@ -39,11 +39,15 @@ const FormElementsPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await toast.promise(axios.delete(`/api/request-quote/${id}`), {
+      const response = await toast.promise(axios.delete(`/api/request-quote/${id}`), {
         pending: "Deleting Request Quote",
         success: "Request Quote deleted successfully",
         error: "Something went wrong",
       });
+
+      if(response.status === 200){
+        fetchData();
+      }
     } catch (error) {
       toast.error("Something went wrong");
       console.log(error);
