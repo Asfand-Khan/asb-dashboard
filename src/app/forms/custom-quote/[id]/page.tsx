@@ -8,10 +8,10 @@ import React, { Suspense } from "react";
 
 const page = async ({ params }: { params: { id: string } }) => {
   let data: any = null;
-  console.log(params.id);
-
+  let isLoading = false;
   const fetchData = async () => {
     try {
+      isLoading = true;
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/custom/${params.id}`,
       );
@@ -19,15 +19,18 @@ const page = async ({ params }: { params: { id: string } }) => {
       data = response.data;
     } catch (error) {
       console.log(error);
+    }finally{
+      isLoading = false;
     }
   };
 
   await fetchData();
 
+  if(isLoading) return <Loader />
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Detail Request Quote" goBack />
-      <Suspense fallback={<Loader />}>
         <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="flex w-full flex-col gap-3">
             <div className="flex w-full items-center justify-start gap-7">
@@ -87,7 +90,6 @@ const page = async ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
-      </Suspense>
     </DefaultLayout>
   );
 };
