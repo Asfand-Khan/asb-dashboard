@@ -19,18 +19,19 @@ const page = async ({ params }: { params: { id: string } }) => {
       data = response.data;
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       isLoading = false;
     }
   };
 
   await fetchData();
 
-  if(isLoading) return <Loader />
+  if (isLoading) return <Loader />;
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Detail Request Quote" goBack />
+      <Suspense fallback={<Loader />}>
+        <Breadcrumb pageName="Detail Request Quote" goBack />
         <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="flex w-full flex-col gap-3">
             <div className="flex w-full items-center justify-start gap-7">
@@ -90,6 +91,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
+      </Suspense>
     </DefaultLayout>
   );
 };
