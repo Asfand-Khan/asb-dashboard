@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
 
-  const protectedRoutes = ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process"];
+  const protectedRoutes = ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process", "/forms/:path*"];
   const pathname = request.nextUrl.pathname;
 
   if (!token && protectedRoutes.includes(pathname)) {
@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process"],
+  matcher: ["/", "/case-study/add", "/hero/add", "/our-mission/add", "/reviews/add", "/services/add", "/service-page/content", "/service-page/our-process", "/forms/:path*"],
 };

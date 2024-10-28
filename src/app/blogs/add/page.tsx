@@ -179,7 +179,7 @@ const Page = () => {
                       </span>
                   </label>
                   <textarea
-                    maxLength={100}
+                    maxLength={200}
                     placeholder="Enter Short Description"
                     id="shortDesc"
                     {...register("shortDesc")}
