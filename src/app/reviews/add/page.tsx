@@ -183,7 +183,12 @@ const Page = () => {
                       handleDelete(review.id);
                     }}
                   >
-                    x
+                    <Image
+                      width={20}
+                      height={20}
+                      alt="trash"
+                      src={"/images/icon/trash.svg"}
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <span>

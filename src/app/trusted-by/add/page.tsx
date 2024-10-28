@@ -138,7 +138,12 @@ const Page = () => {
                       handleDelete(eachTrustedBy.id);
                     }}
                   >
-                    x
+                    <Image
+                      width={20}
+                      height={20}
+                      alt="trash"
+                      src={"/images/icon/trash.svg"}
+                    />
                   </div>
                 </div>
                 <div className="flex w-4/12 items-center justify-end overflow-hidden">

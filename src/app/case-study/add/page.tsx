@@ -240,7 +240,14 @@ const Page = () => {
             {caseStudies.map((caseStudy, index) => (
               <div key={caseStudy.id} className="flex items-center justify-between">
                 <div className="flex gap-5 items-center">
-                  <div className="text-red-500 font-extrabold text-xl cursor-pointer" onClick={()=>{ handleDelete(caseStudy.id)}}>x</div>
+                  <div className="text-red-500 font-extrabold text-xl cursor-pointer" onClick={()=>{ handleDelete(caseStudy.id)}}>
+                    <Image
+                      width={20}
+                      height={20}
+                      alt="trash"
+                      src={"/images/icon/trash.svg"}
+                    />
+                  </div>
                   <div className="flex flex-col gap-1">
                     <span>
                       <span className="font-semibold">Location: </span>

@@ -186,7 +186,12 @@ const Page = () => {
                       handleDelete(service.id);
                     }}
                   >
-                    x
+                    <Image
+                      width={20}
+                      height={20}
+                      alt="trash"
+                      src={"/images/icon/trash.svg"}
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <span>
