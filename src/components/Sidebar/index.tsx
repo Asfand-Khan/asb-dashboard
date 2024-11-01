@@ -322,8 +322,8 @@ const menuGroups = [
         label: "News Articles",
         route: "#",
         children: [
-          { label: "View Blogs", route: "/blogs" },
-          { label: "Add Blog", route: "/blogs/add" },
+          { label: "View News Articles", route: "/blogs" },
+          { label: "Add News Articles", route: "/blogs/add" },
         ],
       },
     ],

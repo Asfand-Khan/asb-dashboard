@@ -60,7 +60,7 @@ const FormLayout = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="All Blogs" />
+      <Breadcrumb pageName="News Articles" />
 
       <div className="overflow-y-auto rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="">
