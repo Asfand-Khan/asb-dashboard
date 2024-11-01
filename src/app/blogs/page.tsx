@@ -118,7 +118,7 @@ const FormLayout = () => {
                     </Link>
                     <a
                       target="_blank"
-                      href={`https://aussie-steel-beams.vercel.app/blogs/${row.slug}`}
+                      href={`https://aussie-steel-beams.vercel.app/news_article/${row.slug}`}
                       className="cursor-pointer"
                     >
                       <Image
