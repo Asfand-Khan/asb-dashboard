@@ -15,6 +15,8 @@ type Blog = {
   slug: string;
   shortDesc: string;
   longDesc: string;
+  serviceDesc: string;
+  serviceProcessDesc: string;
   image: string;
   createdAt: Date;
   updatedAt: Date;
@@ -165,6 +167,18 @@ const FormLayout = () => {
               {
                 name: "Long Description",
                 selector: (row: Blog) => row.longDesc,
+                sortable: true,
+                center: true,
+              },
+              {
+                name: "Service Description",
+                selector: (row: Blog) => row.serviceDesc,
+                sortable: true,
+                center: true,
+              },
+              {
+                name: "Service Process Description",
+                selector: (row: Blog) => row.serviceProcessDesc,
                 sortable: true,
                 center: true,
               },

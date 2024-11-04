@@ -30,6 +30,8 @@ const serviceSchema = z.object({
       message: "Short Description should be less than 200 characters",
     }),
   longDesc: z.string().min(1, { message: "Long Description is required" }),
+  serviceDesc: z.string().min(1, { message: "Service Description is required" }),
+  serviceProcessDesc: z.string().min(1, { message: "Service Process Description is required" }),
   image: z.any(),
 });
 
@@ -81,6 +83,8 @@ const Page = () => {
     formData.append("title", data.title);
     formData.append("longDesc", data.longDesc);
     formData.append("shortDesc", data.shortDesc);
+    formData.append("serviceDesc", data.serviceDesc);
+    formData.append("serviceProcessDesc", data.serviceProcessDesc);
     formData.append("slug", makeSlug(data.title));
 
     try {
@@ -137,6 +141,14 @@ const Page = () => {
 
   const handleQuillChange = (value: string) => {
     setValue("longDesc", value);
+  };
+
+  const handleServiceChange = (value: string) => {
+    setValue("serviceDesc", value);
+  };
+
+  const handleServiceProcessChange = (value: string) => {
+    setValue("serviceProcessDesc", value);
   };
 
   useEffect(() => {
@@ -196,12 +208,6 @@ const Page = () => {
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                     Long Description <span className="text-meta-1">*</span>
                   </label>
-                  {/* <ReactQuill
-                    theme="snow"
-                    value={getValues("longDesc") || ""}
-                    onChange={handleQuillChange}
-                  /> */}
-
                   <JoditEditor
                     value={getValues("longDesc") || ""}
                     onChange={handleQuillChange}
@@ -210,6 +216,38 @@ const Page = () => {
                   {errors.longDesc && (
                     <p className="mt-1 text-sm text-red-500">
                       Long Description is required
+                    </p>
+                  )}
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Services Editor <span className="text-meta-1">*</span>
+                  </label>
+                  <JoditEditor
+                    value={getValues("serviceDesc") || ""}
+                    onChange={handleServiceChange}
+                    ref={editor}
+                  />
+                  {errors.serviceDesc && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Service Description is required
+                    </p>
+                  )}
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Service Process Editor <span className="text-meta-1">*</span>
+                  </label>
+                  <JoditEditor
+                    value={getValues("serviceProcessDesc") || ""}
+                    onChange={handleServiceProcessChange}
+                    ref={editor}
+                  />
+                  {errors.serviceProcessDesc && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Service Process Description is required
                     </p>
                   )}
                 </div>

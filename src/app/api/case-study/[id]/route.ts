@@ -24,10 +24,13 @@ export async function DELETE(
         { status: 404 },
       );
 
-    await cloudinary.api.delete_resources([caseStudy.image], {
-      type: "upload",
-      resource_type: "image",
-    });
+    for (const image of caseStudy.images) {
+      await cloudinary.api.delete_resources([image], {
+        type: "upload",
+        resource_type: "image",
+      });
+    }
+
     await prisma.casestudy.delete({ where: { id } });
 
     return NextResponse.json(

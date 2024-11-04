@@ -25,11 +25,9 @@ model Ourmission {
 }
 
 model Casestudy {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  location String
-  problem  String
-  solution String
-  image    String
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  content String
+  images  String[]
 }
 
 model Customquote {
@@ -108,6 +106,8 @@ model Service {
   slug      String @unique
   shortDesc String
   longDesc  String
+  serviceDesc String
+  serviceProcessDesc  String
   image     String
 
   createdAt DateTime @default(now())

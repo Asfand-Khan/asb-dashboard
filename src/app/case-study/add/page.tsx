@@ -4,34 +4,18 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import ButtonLoader from "@/components/common/screenLoader";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
-import { z } from "zod";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const caseStudySchema = z.object({
-  location: z.string().min(1, { message: "Location is required" }),
-  problem: z.string().min(1, { message: "Problem is required" }),
-  solution: z.string().min(1, { message: "Solution is required" }),
-  image: z.any(),
-});
-
-type CaseStudyForm = z.infer<typeof caseStudySchema>;
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const Page = () => {
+  const editor = useRef(null);
+  const [value, setValue] = useState("");
   const [caseStudies, setCaseStudies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<CaseStudyForm>({
-    resolver: zodResolver(caseStudySchema),
-  });
 
   // const handleFileChange = (e: any) => {
   //   const file = e.target.files[0];
@@ -43,36 +27,55 @@ const Page = () => {
   //   };
   // };
 
-  const [file,setFile] = useState<File | null>(null);
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [file1, setFile1] = useState<File | null>(null);
+  const handleFileChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
-    setFile(selectedFile);
+    setFile1(selectedFile);
   };
 
-  const onSubmit = async (data:CaseStudyForm) => {
-    console.log(data);
-    console.log(file);
+  const [file2, setFile2] = useState<File | null>(null);
+  const handleFileChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile2(selectedFile);
+  };
 
-    if(!file) {
-      toast.error("Please upload an image");
+  const [file3, setFile3] = useState<File | null>(null);
+  const handleFileChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile3(selectedFile);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (value.length == 0 || value == "<p><br></p>") {
+      toast.error("Please enter the case study content");
+      return;
+    }
+
+    if (!file1) {
+      toast.error("Images 1 is required.");
       return;
     }
 
     const formData = new FormData();
-      formData.append('file', file);
-      formData.append('location', data.location);
-      formData.append('problem', data.problem);
-      formData.append('solution', data.solution);
+    formData.append("content", value);
+    formData.append("file1", file1);
+    if (file2) formData.append("file2", file2);
+    if (file3) formData.append("file3", file3);
 
     try {
       setLoading(true);
-      const response = await axios.post('/api/case-study',formData);
+      const response = await axios.post("/api/case-study", formData);
 
       if (response.status === 200) {
         toast.success("Case study added successfully!");
         fetchData();
-        reset();
-      }else{
+        setValue("");
+        setFile1(null);
+        setFile2(null);
+        setFile3(null);
+      } else {
         toast.error("Something went wrong");
         console.log(response.data);
       }
@@ -82,10 +85,10 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   // const onSubmit = async (data: CaseStudyForm) => {
-    
+
   //   if (!imageBase64) {
   //     toast.error("Please upload an image");
   //     return;
@@ -131,7 +134,11 @@ const Page = () => {
   const handleDelete = async (id: any) => {
     try {
       // console.log(caseStudy)
-      const response = await axios.delete(`/api/case-study/${id}`);
+      const response = await toast.promise(axios.delete(`/api/case-study/${id}`), {
+        pending: "Deleting Case Study",
+        success: "Case Study deleted successfully",
+        error: "Something went wrong",
+      })
       if (response.status === 200) {
         toast.success("Case study deleted successfully!");
         fetchData();
@@ -148,78 +155,67 @@ const Page = () => {
     fetchData();
   }, []);
 
+  const handleQuillChange = (value: string) => {
+    setValue(value);
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Case Study" />
       <div className="">
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit}>
               <div className="p-6.5">
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Location <span className="text-meta-1">*</span>
+                    Case Study Editor <span className="text-meta-1">*</span>
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Location"
-                    id="location"
-                    {...register("location")}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-secondary"
+                  <JoditEditor
+                    value={value}
+                    onChange={handleQuillChange}
+                    ref={editor}
                   />
-                  {errors.location && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.location.message}
-                    </p>
-                  )}
                 </div>
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Problem <span className="text-meta-1">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Problem"
-                    id="problem"
-                    {...register("problem")}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-secondary"
-                  />
-                  {errors.problem && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.problem.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Solution <span className="text-meta-1">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Solution"
-                    id="solution"
-                    {...register("solution")}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-secondary"
-                  />
-                  {errors.solution && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.solution.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image <span className="text-meta-1"></span>
+                    Image 1 <span className="text-meta-1"></span>
                   </label>
                   <input
                     type="file"
                     placeholder="Choose image"
                     id="image"
                     accept="image/*"
-                    onChange={handleFileChange}
+                    onChange={handleFileChange1}
+                    className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:px-5 file:py-3 file:hover:bg-secondary file:hover:bg-opacity-10 focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-secondary"
+                  />
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Image 2 <span className="text-meta-1"></span>
+                  </label>
+                  <input
+                    type="file"
+                    placeholder="Choose image"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleFileChange2}
+                    className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:px-5 file:py-3 file:hover:bg-secondary file:hover:bg-opacity-10 focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-secondary"
+                  />
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Image 3 <span className="text-meta-1"></span>
+                  </label>
+                  <input
+                    type="file"
+                    placeholder="Choose image"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleFileChange3}
                     className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:px-5 file:py-3 file:hover:bg-secondary file:hover:bg-opacity-10 focus:border-secondary active:border-secondary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-secondary"
                   />
                 </div>
@@ -238,9 +234,17 @@ const Page = () => {
 
           <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
             {caseStudies.map((caseStudy, index) => (
-              <div key={caseStudy.id} className="flex items-center justify-between">
-                <div className="flex gap-5 items-center">
-                  <div className="text-red-500 font-extrabold text-xl cursor-pointer" onClick={()=>{ handleDelete(caseStudy.id)}}>
+              <div
+                key={caseStudy.id}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-5">
+                  <div
+                    className="cursor-pointer text-xl font-extrabold text-red-500"
+                    onClick={() => {
+                      handleDelete(caseStudy.id);
+                    }}
+                  >
                     <Image
                       width={20}
                       height={20}
@@ -250,24 +254,23 @@ const Page = () => {
                   </div>
                   <div className="flex flex-col gap-1">
                     <span>
-                      <span className="font-semibold">Location: </span>
-                      {caseStudy.location}
-                      </span>
-                    <span>
-                    <span className="font-semibold">Problem: </span>
-                      {caseStudy.problem}
-                      </span>
-                    <span>
-                    <span className="font-semibold">Solution: </span>
-                      {caseStudy.solution}
-                      </span>
+                      <span className="font-semibold">Content: </span>
+                      {caseStudy.content && (
+                        <div
+                          className="content-html"
+                          dangerouslySetInnerHTML={{
+                            __html: caseStudy.content,
+                          }}
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
-                <div className="w-4/12 flex justify-end items-center overflow-hidden">
+                <div className="flex w-4/12 items-center justify-end overflow-hidden">
                   <Image
                     width={100}
                     height={100}
-                    src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${caseStudy.image}`}
+                    src={`${process.env.NEXT_PUBLIC_CLOUDINARY_ASSETS_ACCESS_URL}/${caseStudy.images[0]}`}
                     alt={`case study ${index}`}
                   />
                 </div>

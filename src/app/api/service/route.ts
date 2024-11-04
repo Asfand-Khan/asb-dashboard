@@ -36,10 +36,19 @@ export async function POST(request: Request) {
     const title = formData.get("title") as string;
     const shortDesc = formData.get("shortDesc") as string;
     const longDesc = formData.get("longDesc") as string;
+    const serviceDesc = formData.get("serviceDesc") as string;
+    const serviceProcessDesc = formData.get("serviceProcessDesc") as string;
     const slug = formData.get("slug") as string;
     const update = formData.get("update") as string;
 
-    if (!title || !shortDesc || !longDesc || !slug) {
+    if (
+      !title ||
+      !shortDesc ||
+      !longDesc ||
+      !slug ||
+      !serviceDesc ||
+      !serviceProcessDesc
+    ) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -51,13 +60,16 @@ export async function POST(request: Request) {
       console.log("update chaloao");
 
       const service = await prisma.service.findUnique({
-        where:{
-          slug: slug
-        }
-      })
+        where: {
+          slug: slug,
+        },
+      });
 
       if (!service) {
-        return NextResponse.json({ error: "Service not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Service not found" },
+          { status: 404 },
+        );
       }
 
       await cloudinary.api.delete_resources([service.image], {
@@ -86,15 +98,16 @@ export async function POST(request: Request) {
         where: {
           slug: slug,
         },
-        data:{
+        data: {
           title,
           longDesc,
           slug,
           shortDesc,
+          serviceDesc,
+          serviceProcessDesc,
           image: result.public_id,
-        }
-      })
-
+        },
+      });
 
       return NextResponse.json(updatedService, { status: 200 });
     } else {
@@ -121,6 +134,8 @@ export async function POST(request: Request) {
           longDesc,
           slug,
           shortDesc,
+          serviceDesc,
+          serviceProcessDesc,
           image: result.public_id,
         },
       });

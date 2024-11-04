@@ -288,6 +288,8 @@ const blogSchema = z.object({
       message: "Short Description should be less than 100 characters",
     }),
   longDesc: z.string().min(1, { message: "Long Description is required" }),
+  serviceDesc: z.string().min(1, { message: "Service Description is required" }),
+  serviceProcessDesc: z.string().min(1, { message: "Service Process Description is required" }),
   image: z.any(),
 });
 
@@ -295,6 +297,8 @@ type BlogForm = z.infer<typeof blogSchema>;
 
 const Page = () => {
   const editor = useRef<any>(null);
+  const serviceEditor = useRef<any>(null);
+  const serviceProcessEditor = useRef<any>(null);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const { id } = useParams();
@@ -328,13 +332,15 @@ const Page = () => {
     formData.append("update", "true");
     formData.append("file", file);
     formData.append("title", data.title);
-    formData.append("longDesc", longDesc); // use longDesc state here
     formData.append("shortDesc", data.shortDesc);
+    formData.append("longDesc", data.longDesc);
+    formData.append("serviceDesc", data.serviceDesc);
+    formData.append("serviceProcessDesc", data.serviceProcessDesc);
     formData.append("slug", makeSlug(data.title));
 
     try {
       setLoading(true);
-      const response = await axios.post(`/api/service`, formData);
+      const response = await axios.put(`/api/service/${id}`, formData);
 
       if (response.status === 200) {
         toast.success("Service updated successfully!");
@@ -385,6 +391,8 @@ const Page = () => {
         setValue("title", response.data.title);
         setValue("shortDesc", response.data.shortDesc);
         setValue("longDesc", response.data.longDesc);
+        setValue("serviceDesc", response.data.serviceDesc);
+        setValue("serviceProcessDesc", response.data.serviceProcessDesc);
         setValue("image", response.data.image);
         setLongDesc(response.data.longDesc); // Update longDesc state
       }
@@ -395,6 +403,14 @@ const Page = () => {
       setPageLoading(false);
     }
   }, [id, setValue]);
+
+  const handleServiceChange = (value: string) => {
+    setValue("serviceDesc", value);
+  };
+
+  const handleServiceProcessChange = (value: string) => {
+    setValue("serviceProcessDesc", value);
+  };
 
   useEffect(() => {
     fetchData();
@@ -455,12 +471,44 @@ const Page = () => {
                   </label>
                   <JoditEditor
                     ref={editor}
-                    value={longDesc} // use longDesc state
+                    value={getValues("longDesc") || ""} // use longDesc state
                     onChange={handleQuillChange}
                   />
                   {errors.longDesc && (
                     <p className="mt-1 text-sm text-red-500">
                       Long Description is required
+                    </p>
+                  )}
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Services Editor <span className="text-meta-1">*</span>
+                  </label>
+                  <JoditEditor
+                    value={getValues("serviceDesc") || ""}
+                    onChange={handleServiceChange}
+                    ref={serviceEditor}
+                  />
+                  {errors.serviceDesc && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Service Description is required
+                    </p>
+                  )}
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Service Process Editor <span className="text-meta-1">*</span>
+                  </label>
+                  <JoditEditor
+                    value={getValues("serviceProcessDesc") || ""}
+                    onChange={handleServiceProcessChange}
+                    ref={serviceProcessEditor}
+                  />
+                  {errors.serviceProcessDesc && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Service Process Description is required
                     </p>
                   )}
                 </div>

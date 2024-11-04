@@ -32,38 +32,94 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    const file = formData.get("file") as File;
-    const location = formData.get("location") as string;
-    const problem = formData.get("problem") as string;
-    const solution = formData.get("solution") as string;
+    const file1 = formData.get("file1") as File;
+    const file2 = formData.get("file2") as File;
+    const file3 = formData.get("file3") as File;
+    const content = formData.get("content") as string;
 
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    if (!content) {
+      return NextResponse.json(
+        { error: "Content is required" },
+        { status: 400 },
+      );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    if (!file1) {
+      return NextResponse.json(
+        { error: "Image 1 is required" },
+        { status: 400 },
+      );
+    }
 
-    const result = await new Promise<CloudinaryUploadResult>(
-      (resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "ASB-case-study" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result as CloudinaryUploadResult);
-          },
-        );
+    let public_ids: string[] = [];
 
-        uploadStream.end(buffer);
-      },
-    );
+    if(file1) {
+      const bytes = await file1.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const result = await new Promise<CloudinaryUploadResult>(
+        (resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "ASB-case-study" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result as CloudinaryUploadResult);
+            },
+          );
+
+          uploadStream.end(buffer);
+        },
+      );
+
+      public_ids.push(result.public_id);
+    }
+
+    if(file2) {
+      const bytes = await file2.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const result = await new Promise<CloudinaryUploadResult>(
+        (resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "ASB-case-study" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result as CloudinaryUploadResult);
+            },
+          );
+
+          uploadStream.end(buffer);
+        },
+      );
+
+      public_ids.push(result.public_id);
+    }
+
+    if(file3) {
+      const bytes = await file3.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const result = await new Promise<CloudinaryUploadResult>(
+        (resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "ASB-case-study" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result as CloudinaryUploadResult);
+            },
+          );
+
+          uploadStream.end(buffer);
+        },
+      );
+
+      public_ids.push(result.public_id);
+    }
 
     const caseStudy = await prisma.casestudy.create({
       data: {
-        location,
-        problem,
-        solution,
-        image: result.public_id,
+        content: content,
+        images: public_ids,
       },
     });
 
