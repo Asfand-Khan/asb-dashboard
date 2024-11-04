@@ -27,6 +27,7 @@ model Ourmission {
 model Casestudy {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   content String
+  learnMore String?
   images  String[]
 }
 

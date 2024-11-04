@@ -101,7 +101,7 @@ const Page = () => {
               <div className="p-6.5">
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image <span className="text-meta-1"></span>
+                    Image <span className="text-meta-1">(1024x1024)</span>
                   </label>
                   <input
                     type="file"

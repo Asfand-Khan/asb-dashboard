@@ -14,6 +14,7 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 const Page = () => {
   const editor = useRef(null);
   const [value, setValue] = useState("");
+  const [learnMore, setLearnMore] = useState("");
   const [caseStudies, setCaseStudies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +64,7 @@ const Page = () => {
     formData.append("file1", file1);
     if (file2) formData.append("file2", file2);
     if (file3) formData.append("file3", file3);
+    if (learnMore) formData.append("learnMore", learnMore);
 
     try {
       setLoading(true);
@@ -134,11 +136,14 @@ const Page = () => {
   const handleDelete = async (id: any) => {
     try {
       // console.log(caseStudy)
-      const response = await toast.promise(axios.delete(`/api/case-study/${id}`), {
-        pending: "Deleting Case Study",
-        success: "Case Study deleted successfully",
-        error: "Something went wrong",
-      })
+      const response = await toast.promise(
+        axios.delete(`/api/case-study/${id}`),
+        {
+          pending: "Deleting Case Study",
+          success: "Case Study deleted successfully",
+          error: "Something went wrong",
+        },
+      );
       if (response.status === 200) {
         toast.success("Case study deleted successfully!");
         fetchData();
@@ -180,7 +185,21 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image 1 <span className="text-meta-1"></span>
+                    Learn More (Url):
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="https://example.com"
+                    value={learnMore}
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    onChange={(e) => setLearnMore(e.target.value)}
+                  />
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                    Image 1 <span className="text-meta-1"> (1024x1024) </span>
                   </label>
                   <input
                     type="file"
@@ -194,7 +213,7 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image 2 <span className="text-meta-1"></span>
+                    Image 2 <span className="text-meta-1">(1024x1024)</span>
                   </label>
                   <input
                     type="file"
@@ -208,7 +227,7 @@ const Page = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Image 3 <span className="text-meta-1"></span>
+                    Image 3 <span className="text-meta-1">(1024x1024)</span>
                   </label>
                   <input
                     type="file"

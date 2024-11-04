@@ -36,6 +36,7 @@ export async function POST(request: Request) {
     const file2 = formData.get("file2") as File;
     const file3 = formData.get("file3") as File;
     const content = formData.get("content") as string;
+    const learnMore = formData.get("learnMore") as string;
 
     if (!content) {
       return NextResponse.json(
@@ -119,6 +120,7 @@ export async function POST(request: Request) {
     const caseStudy = await prisma.casestudy.create({
       data: {
         content: content,
+        learnMore: learnMore,
         images: public_ids,
       },
     });
