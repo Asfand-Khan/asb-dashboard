@@ -178,7 +178,7 @@ const Page = () => {
               >
                 <div className="flex items-center gap-5">
                   <div
-                    className="cursor-pointer text-xl font-extrabold text-red-500"
+                    className="cursor-pointer text-xl font-extrabold text-red-500 shrink-0"
                     onClick={() => {
                       handleDelete(review.id);
                     }}
@@ -201,7 +201,7 @@ const Page = () => {
                     </span>
                   </div>
                 </div>
-                <div className="relative flex items-center justify-end overflow-hidden w-[90px] h-[80px]">
+                <div className="relative flex items-center justify-end overflow-hidden w-[90px] h-[80px] shrink-0">
                   <Image
                     className="object-cover w-full"
                     fill

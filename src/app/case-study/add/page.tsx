@@ -259,7 +259,7 @@ const Page = () => {
               >
                 <div className="flex items-center gap-5">
                   <div
-                    className="cursor-pointer text-xl font-extrabold text-red-500"
+                    className="cursor-pointer text-xl font-extrabold text-red-500 shrink-0"
                     onClick={() => {
                       handleDelete(caseStudy.id);
                     }}
@@ -285,7 +285,7 @@ const Page = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex w-4/12 items-center justify-end overflow-hidden">
+                <div className="flex w-4/12 items-center justify-end overflow-hidden shrink-0">
                   <Image
                     width={100}
                     height={100}
