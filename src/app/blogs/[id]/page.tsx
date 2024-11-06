@@ -407,7 +407,7 @@ const Page = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Edit Blog" goBack />
+      <Breadcrumb pageName="Edit News/Article" goBack />
       <div className="">
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">

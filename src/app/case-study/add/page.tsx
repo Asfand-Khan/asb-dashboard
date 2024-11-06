@@ -188,7 +188,6 @@ const Page = () => {
                     Learn More (Url):
                   </label>
                   <input
-                    required
                     type="text"
                     placeholder="https://example.com"
                     value={learnMore}

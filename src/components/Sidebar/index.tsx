@@ -319,11 +319,11 @@ const menuGroups = [
             </defs>
           </svg>
         ),
-        label: "News Articles",
+        label: "News/Articles",
         route: "#",
         children: [
-          { label: "View News Articles", route: "/blogs" },
-          { label: "Add News Articles", route: "/blogs/add" },
+          { label: "View News/Articles", route: "/blogs" },
+          { label: "Add News/Articles", route: "/blogs/add" },
         ],
       },
     ],
