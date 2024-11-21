@@ -21,6 +21,7 @@ export async function GET(request: Request) {
       headers: {
         'Content-Disposition': `attachment; filename="${fileName}"`,
         'Content-Type': 'application/pdf',
+        'Access-Control-Allow-Origin': '*',
       },
     });
   } catch (error) {

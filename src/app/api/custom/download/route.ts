@@ -15,12 +15,13 @@ export async function GET(request: Request) {
       method: 'GET',
       responseType: 'stream',  // We want the file as a stream
     });
-
+    
     // Set headers for file download
     return new NextResponse(response.data, {
       headers: {
         'Content-Disposition': `attachment; filename="${fileName}"`,
         'Content-Type': 'application/pdf',
+        'Access-Control-Allow-Origin': '*',
       },
     });
   } catch (error) {
